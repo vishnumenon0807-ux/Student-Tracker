@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Tracker Dashboard</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+}
+
+/* Navbar */
+
+.navbar{
+    background:#6c3df4;
+    color:white;
+    padding:18px 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{
+    font-size:28px;
+    font-weight:bold;
+}
+
+.nav-links{
+    display:flex;
+    gap:25px;
+}
+
+.nav-links a{
+    text-decoration:none;
+    color:white;
+    font-size:18px;
+    padding:8px 12px;
+    border-radius:6px;
+    transition:0.3s;
+}
+
+.nav-links a:hover{
+    background:white;
+    color:#6c3df4;
+}
+
+.profile-btn{
+    padding:10px 18px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+/* Main Content */
+
+.container{
+    width:90%;
+    margin:auto;
+    margin-top:30px;
+}
+
+.welcome{
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0px 2px 10px rgba(0,0,0,0.1);
+}
+
+.welcome h2{
+    color:#6c3df4;
+}
+
+.cards{
+    margin-top:25px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+}
+
+.card{
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    text-align:center;
+    box-shadow:0px 2px 10px rgba(0,0,0,0.1);
+}
+
+.card h3{
+    color:#6c3df4;
+    margin-bottom:10px;
+}
+
+.card p{
+    font-size:30px;
+    font-weight:bold;
+}
+
+/* Sections */
+
+.section{
+    background:white;
+    margin-top:25px;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0px 2px 10px rgba(0,0,0,0.1);
+}
+
+.section h2{
+    color:#6c3df4;
+    margin-bottom:15px;
+}
+
+.assignment,
+.course{
+    display:flex;
+    justify-content:space-between;
+    padding:15px;
+    border-bottom:1px solid #ddd;
+}
+
+.assignment:last-child,
+.course:last-child{
+    border-bottom:none;
+}
+
+.footer{
+    margin-top:30px;
+    text-align:center;
+    padding:20px;
+    color:gray;
+}
+.navbar{
+    background:#6c3df4;
+    padding:20px 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{
+    color:white;
+    font-size:32px;
+    font-weight:bold;
+}
+
+.nav-links{
+    display:flex;
+    gap:30px;
+}
+
+.nav-links a{
+    color:white;
+    text-decoration:none;
+    font-size:18px;
+    font-weight:500;
+}
+
+.profile-btn{
+    background-color: red;
+    color: white;
+    padding:10px 20px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+
+<div class="navbar">
+
+    <h1>Student Tracker</h1>
+
+    <div class="nav-links">
+        <a href="/homepage">Dashboard</a>
+        <a href="/grades">Grades</a>
+        <a href="/timetable">Timetable</a>
+        <a href="/assignment">Assignment</a>
+        <a href="/attendance">Attendance</a>
+        
+    </div>
+
+    <button class="profile-btn" onClick="window.location.href='/'">Log Out</button>
+
+</div>
+
+    
+
+</nav>
+
+<!-- Main Container -->
+
+<div class="container">
+
+    <!-- Welcome -->
+
+    <div class="welcome">
+
+        <h2>
+            Welcome Vishnu
+        </h2>
+
+        <br>
+
+        <p>
+            Track your academic progress and stay organized.
+        </p>
+
+    </div>
+
+    <!-- Cards -->
+
+    <div class="cards">
+
+        <div class="card">
+            <h3>CGPA</h3>
+            <p>8.75</p>
+        </div>
+
+        <div class="card">
+            <h3>Attendance</h3>
+            <p>89%</p>
+        </div>
+
+        <div class="card">
+            <h3>Courses</h3>
+            <p>6</p>
+        </div>
+
+        <div class="card">
+            <h3>Pending Tasks</h3>
+            <p>3</p>
+        </div>
+
+    </div>
+
+    <!-- Assignments -->
+
+    <div class="section">
+
+        <h2>Upcoming Assignments</h2>
+
+        <div class="assignment">
+            <span>DBMS Project</span>
+            <span>25 June</span>
+        </div>
+
+        <div class="assignment">
+            <span>AI Assignment</span>
+            <span>28 June</span>
+        </div>
+
+        <div class="assignment">
+            <span>Blockchain Report</span>
+            <span>30 June</span>
+        </div>
+
+    </div>
+
+    <!-- Courses -->
+
+    <div class="section">
+
+        <h2>Current Courses</h2>
+
+        <div class="course">
+            <span>Data Structures</span>
+            <span>92%</span>
+        </div>
+
+        <div class="course">
+            <span>DBMS</span>
+            <span>88%</span>
+        </div>
+
+        <div class="course">
+            <span>Operating Systems</span>
+            <span>84%</span>
+        </div>
+
+        <div class="course">
+            <span>Blockchain</span>
+            <span>91%</span>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="footer">
+    Student Tracker Dashboard © 2026
+</div>
+
+</body>
+</html>

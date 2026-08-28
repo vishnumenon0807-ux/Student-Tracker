@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Sign Up</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+
+    <style>
+
+        body{
+            margin:0;
+            height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            background:rgb(23, 25, 43);
+            overflow:hidden;
+        }
+
+        #particles{
+            position:fixed;
+            width:100%;
+            height:100%;
+            top:0;
+            left:0;
+            z-index:-1;
+        }
+
+        #id1{
+            width:350px;
+            padding:25px;
+            text-align:center;
+
+            background:rgba(7, 7, 7, 0.807);;
+            
+
+            border-radius:20px;
+
+
+            color:white;
+        }
+
+        input{
+            width:80%;
+            padding:10px;
+            border-radius:10px;
+            margin-top:5px;
+        }
+
+        button{
+            padding:10px 20px;
+            border-radius:10px;
+            font-size:16px;
+        }
+
+        h1{
+            margin-bottom:20px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div id="particles"></div>
+
+    <div id="id1">
+
+        <h1>Sign Up</h1>
+
+        <form method="POST">
+
+            <h3>Create Username</h3>
+
+            <input
+                type="text"
+                placeholder="Enter your Username"
+                name="name2"
+            >
+
+            <h3>Create Password</h3>
+
+            <input
+                type="password"
+                placeholder="Enter your Password"
+                name="password2"
+            >
+
+            <br><br>
+
+            <button type="submit">
+                Create Account
+            </button>
+
+        </form>
+
+    </div>
+
+    <script>
+
+        tsParticles.load("particles", {
+
+            particles: {
+
+                number: {
+                    value: 100
+                },
+
+                color: {
+                    value: "#ffffff"
+                },
+
+                links: {
+                    enable: true,
+                    distance: 150,
+                    color: "#ffffff",
+                    opacity: 0.3
+                },
+
+                move: {
+                    enable: true,
+                    speed: 1
+                },
+
+                size: {
+                    value: 3
+                },
+
+                opacity: {
+                    value: 0.5
+                }
+
+            }
+
+        });
+
+    </script>
+
+</body>
+
+</html>

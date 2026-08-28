@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+
+    <style>
+
+        body{
+            margin:0;
+            height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            background:rgb(38, 23, 43);
+            overflow:hidden;
+        }
+
+        #particles{
+            position:fixed;
+            width:100%;
+            height:100%;
+            top:0;
+            left:0;
+            z-index:-1;
+        }
+
+        #id1{
+            width:350px;
+            padding:25px;
+            text-align:center;
+
+            background:rgba(7, 7, 7, 0.807);
+            
+
+            border-radius:20px;
+
+
+            color:white;
+        }
+
+        input{
+            width:80%;
+            padding:10px;
+           
+            border-radius:10px;
+            margin-top:5px;
+        }
+
+        button{
+            padding:10px 20px;
+           
+            border-radius:10px;
+            cursor:pointer;
+            font-size:16px;
+        }
+
+        a{
+            color:white;
+            
+        }
+
+      
+
+    </style>
+</head>
+
+<body>
+
+    <div id="particles"></div>
+
+    <div id="id1">
+
+        <form method="POST">
+
+            <h2>Username</h2>
+
+            <input
+                type="text"
+                placeholder="Enter your Username"
+                name="name1"
+            >
+
+            <h2>Password</h2>
+
+            <input
+                type="password"
+                placeholder="Enter your password"
+                name="password1"
+            >
+
+            <br><br>
+
+            <button type="submit">
+                Enter
+            </button>
+
+            <br><br>
+
+            <a href="/sign-up">Sign Up</a>
+
+        </form>
+
+    </div>
+
+    <script>
+
+        tsParticles.load("particles", {
+
+            particles: {
+
+                number: {
+                    value: 100
+                },
+
+                color: {
+                    value: "#ffffff"
+                },
+
+                links: {
+                    enable: true,
+                    distance: 150,
+                    color: "#ffffff",
+                    opacity: 0.3
+                },
+
+                move: {
+                    enable: true,
+                    speed: 1
+                },
+
+                size: {
+                    value: 3
+                },
+
+                opacity: {
+                    value: 0.5
+                }
+            }
+
+        });
+
+    </script>
+
+</body>
+</html>

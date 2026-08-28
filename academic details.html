@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Academic Details</title>
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding-top: 50px;
+        }
+
+        .container{
+            width: 400px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px gray;
+        }
+
+        input, select{
+            width: 80%;
+            padding: 10px;
+            margin: 10px;
+        }
+
+        button{
+            padding: 10px 20px;
+            background: blueviolet;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .semester{
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>Academic Information</h2>
+
+    <label>Select Your Year</label>
+    <br>
+
+    <select id="year" onchange="generateSemesters()">
+        <option value="">Choose Year</option>
+        <option value="1">1st Year</option>
+        <option value="2">2nd Year</option>
+        <option value="3">3rd Year</option>
+        <option value="4">4th Year</option>
+    </select>
+
+    <form id="gpaForm">
+
+        <div id="semesterFields"></div>
+
+        <button type="submit">Submit</button>
+
+    </form>
+
+</div>
+
+<script>
+
+function generateSemesters(){
+
+    let year = document.getElementById("year").value;
+
+    let semesterDiv = document.getElementById("semesterFields");
+
+    semesterDiv.innerHTML = "";
+
+    let semesters = year * 2;
+
+    for(let i = 1; i <= semesters; i++){
+
+        let div = document.createElement("div");
+
+        div.className = "semester";
+
+        div.innerHTML = `
+            <label>Semester ${i} GPA</label><br>
+            <input
+                type="number"
+                step="0.01"
+                min="0"
+                max="10"
+                name="sem${i}"
+                placeholder="Enter GPA"
+                required>
+
+            <br>
+
+            <label>Semester ${i} Credits</label><br>
+            <input
+                type="number"
+                min="1"
+                name="credits${i}"
+                placeholder="Enter Credits"
+                required>
+
+            <hr>
+        `;
+
+        semesterDiv.appendChild(div);
+    }
+}
+</script>
+
+</body>
+</html>
