@@ -72,9 +72,100 @@ app.post("/", async (req, res) => {
     }
 
 });
-app.get("/homepage",(req,res)=>{
-    res.sendFile(path.resolve('homepage.html'));
-})
+
+
+app.get("/homepage", async(req,res)=>{
+
+    try{
+
+        const name=req.session.name1;
+
+        if(!name){
+            return res.redirect("/");
+        }
+
+        const student=await db.query(
+            `SELECT cgpa
+            FROM username
+            WHERE name=$1`,
+            [name]
+        );
+
+        const upcoming=await db.query(
+            `SELECT subject,assignment,deadline
+            FROM assignment
+            WHERE name=$1
+            AND deadline>=CURRENT_DATE
+            ORDER BY deadline
+            LIMIT 5`,
+            [name]
+        );
+
+        const pending=await db.query(
+            `SELECT COUNT(*) AS count
+            FROM assignment
+            WHERE name=$1
+            AND deadline>=CURRENT_DATE`,
+            [name]
+        );
+
+        const subjects=await db.query(
+            `SELECT subject,attended,total
+            FROM subject
+            WHERE name=$1
+            ORDER BY subject`,
+            [name]
+        );
+
+        let attended=0;
+        let total=0;
+
+        subjects.rows.forEach(s=>{
+
+            attended+=Number(s.attended);
+            total+=Number(s.total);
+
+        });
+
+        res.render("homepage",{
+
+            name:name,
+
+            cgpa:student.rows[0]
+                ? student.rows[0].cgpa
+                : null,
+
+            attendance:total>0
+                ? (attended/total)*100
+                : null,
+
+            courses:subjects.rows.length,
+
+            pending:Number(pending.rows[0].count),
+
+            assignments:upcoming.rows,
+
+            subjects:subjects.rows
+
+        });
+
+    }
+
+    catch(err){
+
+        console.log(err);
+        res.send("Something went wrong");
+
+    }
+
+});
+
+app.get("/logout",(req,res)=>{
+
+    req.session=null;
+    res.redirect("/");
+
+});
 app.get("/academics",(req,res)=>{
     res.render('homepage');
 })

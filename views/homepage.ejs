@@ -23,26 +23,28 @@ body{
 .navbar{
     background:#6c3df4;
     color:white;
-    padding:18px 40px;
+    padding:20px 40px;
     display:flex;
     justify-content:space-between;
     align-items:center;
 }
 
 .logo{
-    font-size:28px;
+    color:white;
+    font-size:32px;
     font-weight:bold;
 }
 
 .nav-links{
     display:flex;
-    gap:25px;
+    gap:30px;
 }
 
 .nav-links a{
     text-decoration:none;
     color:white;
     font-size:18px;
+    font-weight:500;
     padding:8px 12px;
     border-radius:6px;
     transition:0.3s;
@@ -54,7 +56,9 @@ body{
 }
 
 .profile-btn{
-    padding:10px 18px;
+    background-color:red;
+    color:white;
+    padding:10px 20px;
     border:none;
     border-radius:6px;
     cursor:pointer;
@@ -133,52 +137,26 @@ body{
     border-bottom:none;
 }
 
+.empty{
+    padding:15px;
+    color:gray;
+}
+
+.empty a{
+    color:#6c3df4;
+}
+
 .footer{
     margin-top:30px;
     text-align:center;
     padding:20px;
     color:gray;
 }
-.navbar{
-    background:#6c3df4;
-    padding:20px 40px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-
-.logo{
-    color:white;
-    font-size:32px;
-    font-weight:bold;
-}
-
-.nav-links{
-    display:flex;
-    gap:30px;
-}
-
-.nav-links a{
-    color:white;
-    text-decoration:none;
-    font-size:18px;
-    font-weight:500;
-}
-
-.profile-btn{
-    background-color: red;
-    color: white;
-    padding:10px 20px;
-    border:none;
-    border-radius:6px;
-    cursor:pointer;
-}
 
 </style>
 </head>
 
 <body>
-
 
 <div class="navbar">
 
@@ -190,16 +168,11 @@ body{
         <a href="/timetable">Timetable</a>
         <a href="/assignment">Assignment</a>
         <a href="/attendance">Attendance</a>
-        
     </div>
 
-    <button class="profile-btn" onClick="window.location.href='/'">Log Out</button>
+    <button class="profile-btn" onClick="window.location.href='/logout'">Log Out</button>
 
 </div>
-
-    
-
-</nav>
 
 <!-- Main Container -->
 
@@ -210,7 +183,7 @@ body{
     <div class="welcome">
 
         <h2>
-            Welcome Vishnu
+            Welcome <%= name %>
         </h2>
 
         <br>
@@ -227,22 +200,26 @@ body{
 
         <div class="card">
             <h3>CGPA</h3>
-            <p>8.75</p>
+            <p>
+                <%= cgpa==null ? "-" : Number(cgpa).toFixed(2) %>
+            </p>
         </div>
 
         <div class="card">
             <h3>Attendance</h3>
-            <p>89%</p>
+            <p>
+                <%= attendance==null ? "-" : attendance.toFixed(0)+"%" %>
+            </p>
         </div>
 
         <div class="card">
             <h3>Courses</h3>
-            <p>6</p>
+            <p><%= courses %></p>
         </div>
 
         <div class="card">
             <h3>Pending Tasks</h3>
-            <p>3</p>
+            <p><%= pending %></p>
         </div>
 
     </div>
@@ -253,20 +230,29 @@ body{
 
         <h2>Upcoming Assignments</h2>
 
-        <div class="assignment">
-            <span>DBMS Project</span>
-            <span>25 June</span>
-        </div>
+        <% if(assignments.length===0){ %>
 
-        <div class="assignment">
-            <span>AI Assignment</span>
-            <span>28 June</span>
-        </div>
+            <div class="empty">
+                No upcoming assignments.
+                <a href="/assignment">Add one</a>
+            </div>
 
-        <div class="assignment">
-            <span>Blockchain Report</span>
-            <span>30 June</span>
-        </div>
+        <% } %>
+
+        <% assignments.forEach(a=>{ %>
+
+            <div class="assignment">
+
+                <span><%= a.assignment %> (<%= a.subject %>)</span>
+
+                <span>
+                    <%= new Date(a.deadline).getDate() %>
+                    <%= new Date(a.deadline).toLocaleString("en-US",{month:"long"}) %>
+                </span>
+
+            </div>
+
+        <% }) %>
 
     </div>
 
@@ -276,32 +262,37 @@ body{
 
         <h2>Current Courses</h2>
 
-        <div class="course">
-            <span>Data Structures</span>
-            <span>92%</span>
-        </div>
+        <% if(subjects.length===0){ %>
 
-        <div class="course">
-            <span>DBMS</span>
-            <span>88%</span>
-        </div>
+            <div class="empty">
+                No subjects added yet.
+                <a href="/attendance">Add your subjects</a>
+            </div>
 
-        <div class="course">
-            <span>Operating Systems</span>
-            <span>84%</span>
-        </div>
+        <% } %>
 
-        <div class="course">
-            <span>Blockchain</span>
-            <span>91%</span>
-        </div>
+        <% subjects.forEach(s=>{ %>
+
+            <div class="course">
+
+                <span><%= s.subject %></span>
+
+                <span>
+                    <%= s.total>0
+                        ? ((s.attended/s.total)*100).toFixed(0)+"%"
+                        : "-" %>
+                </span>
+
+            </div>
+
+        <% }) %>
 
     </div>
 
 </div>
 
 <div class="footer">
-    Student Tracker Dashboard © 2026
+    Student Tracker Dashboard 
 </div>
 
 </body>
