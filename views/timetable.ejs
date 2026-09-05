@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Timetable</title>
+    <style>
+
+        *{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+    padding:30px;
+}
+
+.container{
+    width:95%;
+    margin:auto;
+}
+
+h1{
+    text-align:center;
+    color:#6c3df4;
+    margin-bottom:30px;
+    font-size:40px;
+}
+
+h2{
+    color:#6c3df4;
+    margin-bottom:20px;
+}
+
+/* ---------------- FORM ---------------- */
+
+.form-box{
+
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0px 4px 15px rgba(0,0,0,0.1);
+    margin-bottom:40px;
+
+}
+
+.course{
+
+    display:grid;
+    grid-template-columns:150px 1fr;
+    gap:15px;
+    margin-bottom:25px;
+    align-items:center;
+
+}
+
+label{
+
+    font-weight:bold;
+
+}
+
+input{
+
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    outline:none;
+    font-size:16px;
+
+}
+
+input:focus{
+
+    border-color:#6c3df4;
+
+}
+
+button{
+
+    padding:12px 22px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:16px;
+    transition:0.3s;
+
+}
+
+#addCourse{
+
+    background:#28a745;
+    color:white;
+    margin-right:15px;
+
+}
+
+#addCourse:hover{
+
+    background:#218838;
+
+}
+
+#generate{
+
+    background:#6c3df4;
+    color:white;
+
+}
+
+#generate:hover{
+
+    background:#5530d8;
+
+}
+
+/* ---------------- TABLE ---------------- */
+
+.table-box{
+
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0px 4px 15px rgba(0,0,0,0.1);
+
+}
+
+table{
+
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+
+}
+
+th{
+
+    background:#bdb8f5;
+    color:black;
+    padding:15px;
+    border:1px solid #444;
+    font-size:18px;
+
+}
+
+td{
+
+    text-align:center;
+    padding:15px;
+    border:1px solid #444;
+    background:#fff8c6;
+    transition:0.3s;
+    font-weight:bold;
+
+}
+
+tbody th{
+
+    background:#c6c6c6;
+
+}
+
+/* Hover */
+
+td:hover{
+
+    background:#e8e3ff;
+    cursor:pointer;
+
+}
+
+/* Highlight selected slots */
+
+.highlight{
+
+    background:#6c3df4 !important;
+    color:white !important;
+    font-weight:bold;
+    transform:scale(1.05);
+
+}
+
+/* Responsive */
+
+@media(max-width:1200px){
+
+table{
+
+    font-size:13px;
+
+}
+
+th,
+td{
+
+    padding:10px;
+
+}
+
+}
+
+@media(max-width:900px){
+
+body{
+
+    padding:15px;
+
+}
+
+.table-box{
+
+    overflow-x:auto;
+
+}
+
+table{
+
+    min-width:1300px;
+
+}
+
+.form-box{
+
+    overflow-x:auto;
+
+}
+
+.course{
+
+    grid-template-columns:1fr;
+
+}
+
+button{
+
+    width:100%;
+    margin-top:10px;
+
+}
+
+}
+.navbar{
+    background:#6c3df4;
+    padding:20px 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{
+    color:white;
+    font-size:32px;
+    font-weight:bold;
+}
+
+.nav-links{
+    display:flex;
+    gap:30px;
+}
+
+.nav-links a{
+    color:white;
+    text-decoration:none;
+    font-size:18px;
+    font-weight:500;
+}
+    
+/* Saved courses list */
+
+.course-list{
+
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+
+}
+
+.course-list th{
+
+    background:#6c3df4;
+    color:white;
+    padding:12px;
+    border:none;
+    font-size:16px;
+
+}
+
+.course-list td{
+
+    background:white;
+    border:none;
+    border-bottom:1px solid #ddd;
+    padding:12px;
+    font-weight:normal;
+
+}
+
+.course-list td:hover{
+
+    background:white;
+    cursor:default;
+
+}
+
+.delete{
+
+    background:#dc3545;
+    color:white;
+    padding:8px 14px;
+    font-size:14px;
+
+}
+
+.delete:hover{
+
+    background:#b52b3a;
+
+}
+
+.empty{
+
+    color:gray;
+    padding:20px;
+    text-align:center;
+
+}
+
+/* VIT slot grid */
+
+#timetable{
+
+    table-layout:fixed;
+    font-size:12px;
+
+}
+
+#timetable th,
+#timetable td{
+
+    padding:6px 2px;
+    font-size:12px;
+    word-break:break-word;
+
+}
+
+#timetable th.rowhead{
+
+    background:#c6c6c6;
+    color:black;
+    width:70px;
+
+}
+
+#timetable th.theory{
+
+    background:#cdc8f7;
+    color:black;
+    font-weight:bold;
+
+}
+
+#timetable th.lab{
+
+    background:#8ec9f5;
+    color:black;
+    font-weight:bold;
+
+}
+
+#timetable th.lunch{
+
+    background:#a6a6a6;
+    color:black;
+    width:26px;
+    padding:4px 0;
+    line-height:1.4;
+
+}
+
+#timetable td{
+
+    height:46px;
+
+}
+
+@media(max-width:1200px){
+
+#timetable,
+#timetable th,
+#timetable td{
+
+    font-size:10px;
+    padding:4px 1px;
+
+}
+
+}
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+ <div class="logo">
+        Student Tracker
+    </div>
+
+
+    <div class="nav-links">
+        <a href="/homepage">Dashboard</a>
+        <a href="/grades">Grades</a>
+        <a href="/timetable">Timetable</a>
+        <a href="/assignment">Assignment</a>
+        <a href="/attendance">Attendance</a>
+
+    </div>
+
+</div>
+
+<div class="container">
+
+    <h1>Student Timetable Generator</h1>
+
+    <div class="form-box">
+
+        <h2>Add Your Courses</h2>
+
+        <form action="/timetable/add" method="POST">
+
+            <div class="course">
+
+                <label>Course Name</label>
+                <input
+                    type="text"
+                    name="course"
+                    placeholder="Example: DBMS"
+                    required
+                >
+
+                <label>Slots</label>
+                <input
+                    type="text"
+                    name="slots"
+                    placeholder="Example: A1 TA1 L15 L16"
+                    required
+                >
+
+            </div>
+
+            <button
+                type="submit"
+                id="addCourse"
+            >
+                + Add Course
+            </button>
+
+        </form>
+
+        <table class="course-list">
+
+            <thead>
+
+            <tr>
+                <th>Course</th>
+                <th>Slots</th>
+                <th>Action</th>
+            </tr>
+
+            </thead>
+
+            <tbody>
+
+            <% if(courses.length===0){ %>
+
+            <tr>
+                <td colspan="3" class="empty">
+                    No courses saved yet. Add one above.
+                </td>
+            </tr>
+
+            <% } %>
+
+            <% courses.forEach(c=>{ %>
+
+            <tr>
+
+                <td><%= c.course %></td>
+
+                <td><%= c.slots %></td>
+
+                <td>
+
+                    <form
+                        action="/timetable/delete/<%= c.id %>"
+                        method="POST"
+                        onsubmit="return confirm('Remove this course?')">
+
+                        <button class="delete">
+                            Remove
+                        </button>
+
+                    </form>
+
+                </td>
+
+            </tr>
+
+            <% }) %>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <br><br>
+
+    <div class="table-box">
+
+        <h2>Your Timetable</h2>
+
+        <table id="timetable">
+
+            <thead>
+
+            <tr>
+                <th class="rowhead">THEORY<br>HOURS</th>
+                <th class="theory">8:00 AM<br>to<br>8:50 AM</th>
+                <th class="theory">9:00 AM<br>to<br>9:50 AM</th>
+                <th class="theory">10:00 AM<br>to<br>10:50 AM</th>
+                <th class="theory">11:00 AM<br>to<br>11:50 AM</th>
+                <th class="theory">12:00 PM<br>to<br>12:50 PM</th>
+                <th class="theory"></th>
+                <th class="lunch" rowspan="7">L<br>U<br>N<br>C<br>H</th>
+                <th class="theory">2:00 PM<br>to<br>2:50 PM</th>
+                <th class="theory">3:00 PM<br>to<br>3:50 PM</th>
+                <th class="theory">4:00 PM<br>to<br>4:50 PM</th>
+                <th class="theory">5:00 PM<br>to<br>5:50 PM</th>
+                <th class="theory">6:00 PM<br>to<br>6:50 PM</th>
+                <th class="theory">6:51 PM<br>to<br>7:00 PM</th>
+                <th class="theory">7:01 PM<br>to<br>7:50 PM</th>
+            </tr>
+
+            <tr>
+                <th class="rowhead">LAB<br>HOURS</th>
+                <th class="lab">08:00 AM<br>to<br>08:50 AM</th>
+                <th class="lab">08:51 AM<br>to<br>09:40 AM</th>
+                <th class="lab">09:51 AM<br>to<br>10:40 AM</th>
+                <th class="lab">10:41 AM<br>to<br>11:30 AM</th>
+                <th class="lab">11:40 AM<br>to<br>12:30 PM</th>
+                <th class="lab">12:31 PM<br>to<br>1:20 PM</th>
+                <th class="lab">2:00 PM<br>to<br>2:50 PM</th>
+                <th class="lab">2:51 PM<br>to<br>3:40 PM</th>
+                <th class="lab">3:51 PM<br>to<br>4:40 PM</th>
+                <th class="lab">4:41 PM<br>to<br>5:30 PM</th>
+                <th class="lab">5:40 PM<br>to<br>6:30 PM</th>
+                <th class="lab">6:31 PM<br>to<br>7:20 PM</th>
+                <th class="lab"></th>
+            </tr>
+
+            </thead>
+
+            <tbody>
+
+            <tr>
+                <th class="rowhead">MON</th>
+                <td data-theory="A1" data-lab="L1">A1 / L1</td>
+                <td data-theory="F1" data-lab="L2">F1 / L2</td>
+                <td data-theory="D1" data-lab="L3">D1 / L3</td>
+                <td data-theory="TB1" data-lab="L4">TB1 / L4</td>
+                <td data-theory="TG1" data-lab="L5">TG1 / L5</td>
+                <td data-theory="" data-lab="L6">L6</td>
+                <td data-theory="A2" data-lab="L31">A2 / L31</td>
+                <td data-theory="F2" data-lab="L32">F2 / L32</td>
+                <td data-theory="D2" data-lab="L33">D2 / L33</td>
+                <td data-theory="TB2" data-lab="L34">TB2 / L34</td>
+                <td data-theory="TG2" data-lab="L35">TG2 / L35</td>
+                <td data-theory="" data-lab="L36">L36</td>
+                <td data-theory="V3" data-lab="">V3</td>
+            </tr>
+
+            <tr>
+                <th class="rowhead">TUE</th>
+                <td data-theory="B1" data-lab="L7">B1 / L7</td>
+                <td data-theory="G1" data-lab="L8">G1 / L8</td>
+                <td data-theory="E1" data-lab="L9">E1 / L9</td>
+                <td data-theory="TC1" data-lab="L10">TC1 / L10</td>
+                <td data-theory="TAA1" data-lab="L11">TAA1 / L11</td>
+                <td data-theory="" data-lab="L12">L12</td>
+                <td data-theory="B2" data-lab="L37">B2 / L37</td>
+                <td data-theory="G2" data-lab="L38">G2 / L38</td>
+                <td data-theory="E2" data-lab="L39">E2 / L39</td>
+                <td data-theory="TC2" data-lab="L40">TC2 / L40</td>
+                <td data-theory="TAA2" data-lab="L41">TAA2 / L41</td>
+                <td data-theory="" data-lab="L42">L42</td>
+                <td data-theory="V4" data-lab="">V4</td>
+            </tr>
+
+            <tr>
+                <th class="rowhead">WED</th>
+                <td data-theory="C1" data-lab="L13">C1 / L13</td>
+                <td data-theory="A1" data-lab="L14">A1 / L14</td>
+                <td data-theory="F1" data-lab="L15">F1 / L15</td>
+                <td data-theory="V1" data-lab="L16">V1 / L16</td>
+                <td data-theory="V2" data-lab="L17">V2 / L17</td>
+                <td data-theory="" data-lab="L18">L18</td>
+                <td data-theory="C2" data-lab="L43">C2 / L43</td>
+                <td data-theory="A2" data-lab="L44">A2 / L44</td>
+                <td data-theory="F2" data-lab="L45">F2 / L45</td>
+                <td data-theory="TD2" data-lab="L46">TD2 / L46</td>
+                <td data-theory="TBB2" data-lab="L47">TBB2 / L47</td>
+                <td data-theory="" data-lab="L48">L48</td>
+                <td data-theory="V5" data-lab="">V5</td>
+            </tr>
+
+            <tr>
+                <th class="rowhead">THU</th>
+                <td data-theory="D1" data-lab="L19">D1 / L19</td>
+                <td data-theory="B1" data-lab="L20">B1 / L20</td>
+                <td data-theory="G1" data-lab="L21">G1 / L21</td>
+                <td data-theory="TE1" data-lab="L22">TE1 / L22</td>
+                <td data-theory="TCC1" data-lab="L23">TCC1 / L23</td>
+                <td data-theory="" data-lab="L24">L24</td>
+                <td data-theory="D2" data-lab="L49">D2 / L49</td>
+                <td data-theory="B2" data-lab="L50">B2 / L50</td>
+                <td data-theory="G2" data-lab="L51">G2 / L51</td>
+                <td data-theory="TE2" data-lab="L52">TE2 / L52</td>
+                <td data-theory="TCC2" data-lab="L53">TCC2 / L53</td>
+                <td data-theory="" data-lab="L54">L54</td>
+                <td data-theory="V6" data-lab="">V6</td>
+            </tr>
+
+            <tr>
+                <th class="rowhead">FRI</th>
+                <td data-theory="E1" data-lab="L25">E1 / L25</td>
+                <td data-theory="C1" data-lab="L26">C1 / L26</td>
+                <td data-theory="TA1" data-lab="L27">TA1 / L27</td>
+                <td data-theory="TF1" data-lab="L28">TF1 / L28</td>
+                <td data-theory="TD1" data-lab="L29">TD1 / L29</td>
+                <td data-theory="" data-lab="L30">L30</td>
+                <td data-theory="E2" data-lab="L55">E2 / L55</td>
+                <td data-theory="C2" data-lab="L56">C2 / L56</td>
+                <td data-theory="TA2" data-lab="L57">TA2 / L57</td>
+                <td data-theory="TF2" data-lab="L58">TF2 / L58</td>
+                <td data-theory="TDD2" data-lab="L59">TDD2 / L59</td>
+                <td data-theory="" data-lab="L60">L60</td>
+                <td data-theory="V7" data-lab="">V7</td>
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+
+const courses = <%- JSON.stringify(courses) %>;
+
+
+// Every cell knows its theory slot and its lab slot,
+// so no slot mapping table is needed - the grid itself
+// already repeats A1, B1 etc on the correct days.
+
+const cells=document.querySelectorAll("#timetable td");
+
+cells.forEach(function(cell){
+
+    cell.dataset.label=cell.innerHTML.trim();
+
+});
+
+
+function drawTimetable(){
+
+
+    // Reset every cell back to its slot label
+
+    cells.forEach(function(cell){
+
+        cell.classList.remove("highlight");
+
+        cell.innerHTML=cell.dataset.label;
+
+        cell.dataset.filled="";
+
+    });
+
+
+    courses.forEach(function(c){
+
+        const slotList=c.slots
+        .toUpperCase()
+        .replace(/,/g," ")
+        .trim()
+        .split(/\s+/);
+
+
+        slotList.forEach(function(slot){
+
+            cells.forEach(function(cell){
+
+                if(cell.dataset.theory!==slot && cell.dataset.lab!==slot){
+
+                    return;
+
+                }
+
+
+                // A theory slot and a lab slot share one box,
+                // so two different courses can land in the same cell
+
+                if(cell.dataset.filled===""){
+
+                    cell.innerHTML=c.course;
+                    cell.dataset.filled=c.course;
+
+                }
+
+                else if(cell.dataset.filled!==c.course){
+
+                    cell.innerHTML=cell.dataset.filled+" / "+c.course;
+                    cell.dataset.filled=cell.innerHTML;
+
+                }
+
+
+                cell.classList.add("highlight");
+
+            });
+
+        });
+
+    });
+
+}
+
+
+drawTimetable();
+
+</script>
+
+</body>
+</html>

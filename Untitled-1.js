@@ -213,9 +213,121 @@ app.post("/edit-grades", async (req,res)=>{
 
     res.redirect("/grades");
 });
-app.get("/timetable",(req,res)=>{
-    res.sendFile(path.resolve("timetable.html"));
-})
+// Run this in psql first:
+//
+// CREATE TABLE timetable(
+//     id SERIAL PRIMARY KEY,
+//     name TEXT,
+//     course TEXT,
+//     slots TEXT
+// );
+//
+// Then replace your existing app.get("/timetable") with these three routes
+
+
+app.get("/timetable", async(req,res)=>{
+
+    try{
+
+        const name=req.session.name1;
+
+        if(!name){
+            return res.redirect("/");
+        }
+
+        const courses=await db.query(
+            `SELECT id,course,slots
+            FROM timetable
+            WHERE name=$1
+            ORDER BY id`,
+            [name]
+        );
+
+        res.render("timetable",{
+            courses:courses.rows
+        });
+
+    }
+
+    catch(err){
+
+        console.log(err);
+        res.send("Something went wrong");
+
+    }
+
+});
+
+
+app.post("/timetable/add", async(req,res)=>{
+
+    try{
+
+        const name=req.session.name1;
+
+        if(!name){
+            return res.redirect("/");
+        }
+
+        const {course,slots}=req.body;
+
+        if(!course || !slots){
+            return res.redirect("/timetable");
+        }
+
+        if(course.trim()==="" || slots.trim()===""){
+            return res.redirect("/timetable");
+        }
+
+        await db.query(
+            `INSERT INTO timetable(name,course,slots)
+            VALUES($1,$2,$3)`,
+            [name,course.trim(),slots.trim().toUpperCase()]
+        );
+
+        res.redirect("/timetable");
+
+    }
+
+    catch(err){
+
+        console.log(err);
+        res.send("Something went wrong");
+
+    }
+
+});
+
+
+app.post("/timetable/delete/:id", async(req,res)=>{
+
+    try{
+
+        const name=req.session.name1;
+
+        if(!name){
+            return res.redirect("/");
+        }
+
+        await db.query(
+            `DELETE FROM timetable
+            WHERE id=$1
+            AND name=$2`,
+            [req.params.id,name]
+        );
+
+        res.redirect("/timetable");
+
+    }
+
+    catch(err){
+
+        console.log(err);
+        res.send("Something went wrong");
+
+    }
+
+});
 app.get("/grades", async (req, res) => {
 
     const result = await db.query(
@@ -232,11 +344,6 @@ res.render("grades", {
 });
 
 });
-// Run this in psql first:
-//
-// ALTER TABLE assignment ADD COLUMN completed BOOLEAN DEFAULT false;
-//
-// Then replace your existing /assignment routes with these five
 
 
 app.get("/assignment", async(req,res)=>{
