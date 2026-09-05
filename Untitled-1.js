@@ -318,9 +318,162 @@ app.get("/assignment/delete/:id",async(req,res)=>{
     }
 
 });
-app.get("/attendance",(req,res)=>{
-    res.sendFile(path.resolve("Attendance.html"));
-})
+// Replace your existing app.get("/attendance") with these four routes
+
+
+app.get("/attendance", async(req,res)=>{
+
+    try{
+
+        const name=req.session.name1;
+
+        if(!name){
+            return res.redirect("/");
+        }
+
+        const subjects=await db.query(
+            `SELECT id,subject,attended,total
+            FROM subject
+            WHERE name=$1
+            ORDER BY subject`,
+            [name]
+        );
+
+        res.render("attendance",{
+            subjects:subjects.rows
+        });
+
+    }
+
+    catch(err){
+
+        console.log(err);
+        res.send("Something went wrong");
+
+    }
+
+});
+
+
+app.post("/attendance/add", async(req,res)=>{
+
+    try{
+
+        const name=req.session.name1;
+
+        if(!name){
+            return res.redirect("/");
+        }
+
+        const subject=req.body.subject;
+
+        if(!subject || subject.trim()===""){
+            return res.redirect("/attendance");
+        }
+
+        await db.query(
+            `INSERT INTO subject(name,subject,attended,total)
+            VALUES($1,$2,0,0)`,
+            [name,subject.trim()]
+        );
+
+        res.redirect("/attendance");
+
+    }
+
+    catch(err){
+
+        console.log(err);
+        res.send("Something went wrong");
+
+    }
+
+});
+
+
+app.post("/attendance/update", async(req,res)=>{
+
+    try{
+
+        const name=req.session.name1;
+
+        if(!name){
+            return res.redirect("/");
+        }
+
+        const subjects=await db.query(
+            `SELECT id
+            FROM subject
+            WHERE name=$1`,
+            [name]
+        );
+
+        for(const s of subjects.rows){
+
+            const attended=Number(req.body["attended_"+s.id]);
+            const total=Number(req.body["total_"+s.id]);
+
+            if(isNaN(attended) || isNaN(total)){
+                continue;
+            }
+
+            if(attended<0 || total<0 || attended>total){
+                continue;
+            }
+
+            await db.query(
+                `UPDATE subject
+                SET attended=$1,total=$2
+                WHERE id=$3
+                AND name=$4`,
+                [attended,total,s.id,name]
+            );
+
+        }
+
+        res.redirect("/attendance");
+
+    }
+
+    catch(err){
+
+        console.log(err);
+        res.send("Something went wrong");
+
+    }
+
+});
+
+
+app.post("/attendance/delete/:id", async(req,res)=>{
+
+    try{
+
+        const name=req.session.name1;
+
+        if(!name){
+            return res.redirect("/");
+        }
+
+        await db.query(
+            `DELETE FROM subject
+            WHERE id=$1
+            AND name=$2`,
+            [req.params.id,name]
+        );
+
+        res.redirect("/attendance");
+
+    }
+
+    catch(err){
+
+        console.log(err);
+        res.send("Something went wrong");
+
+    }
+
+});
 
 app.listen(3000,()=>{
     console.log("server is running");

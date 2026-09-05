@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Attendance Calculator</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+}
+
+/* Navbar */
+
+.navbar{
+    background:#6c3df4;
+    color:white;
+    padding:20px 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{
+    color:white;
+    font-size:32px;
+    font-weight:bold;
+}
+
+.nav-links{
+    display:flex;
+    gap:30px;
+}
+
+.nav-links a{
+    text-decoration:none;
+    color:white;
+    font-size:18px;
+    font-weight:500;
+    padding:8px 12px;
+    border-radius:6px;
+    transition:0.3s;
+}
+
+.nav-links a:hover{
+    background:white;
+    color:#6c3df4;
+}
+
+/* Content */
+
+.container{
+    width:90%;
+    margin:auto;
+    margin-top:30px;
+}
+
+h1{
+    color:#6c3df4;
+    margin-bottom:20px;
+}
+
+.card{
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    margin-bottom:25px;
+    box-shadow:0px 2px 10px rgba(0,0,0,0.1);
+}
+
+.card h2{
+    color:#6c3df4;
+    margin-bottom:15px;
+}
+
+label{
+    display:block;
+    margin-top:10px;
+    margin-bottom:5px;
+    font-weight:bold;
+}
+
+input,
+select{
+    padding:10px;
+    border:1px solid #ccc;
+    border-radius:6px;
+    width:250px;
+}
+
+button{
+    background:#6c3df4;
+    color:white;
+    border:none;
+    padding:10px 20px;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:bold;
+    margin-top:15px;
+}
+
+button:hover{
+    opacity:0.9;
+}
+
+.delete-btn{
+    background:red;
+    padding:6px 12px;
+    margin:0;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+}
+
+th,td{
+    padding:12px;
+    text-align:left;
+    border-bottom:1px solid #ddd;
+}
+
+th{
+    color:#6c3df4;
+}
+
+td input{
+    width:120px;
+}
+
+.good{
+    color:green;
+    font-weight:bold;
+}
+
+.bad{
+    color:red;
+    font-weight:bold;
+}
+
+#prediction{
+    margin-top:20px;
+    padding:15px;
+    background:#f4f6f9;
+    border-radius:6px;
+}
+
+.empty{
+    color:gray;
+}
+
+</style>
+</head>
+
+<body>
+
+<nav class="navbar">
+
+    <div class="logo">
+        Student Tracker
+    </div>
+
+    <div class="nav-links">
+
+        <a href="/homepage">Dashboard</a>
+        <a href="/grades">Grades</a>
+        <a href="/timetable">Timetable</a>
+        <a href="/assignment">Assignment</a>
+        <a href="/attendance">Attendance</a>
+
+    </div>
+
+</nav>
+
+<div class="container">
+
+<h1>Attendance Calculator</h1>
+
+<!-- ADD SUBJECT -->
+
+<div class="card">
+
+    <h2>Add a Subject</h2>
+
+    <form action="/attendance/add" method="POST">
+
+        <label>Subject Name</label>
+
+        <input
+            type="text"
+            name="subject"
+            placeholder="Enter Subject Name"
+            required>
+
+        <br>
+
+        <button type="submit">
+            Add Subject
+        </button>
+
+    </form>
+
+</div>
+
+<!-- ATTENDANCE TABLE -->
+
+<div class="card">
+
+    <h2>Your Attendance</h2>
+
+    <% if(subjects.length===0){ %>
+
+        <p class="empty">
+            No subjects yet. Add one above to start tracking.
+        </p>
+
+    <% } %>
+
+    <% if(subjects.length>0){ %>
+
+    <form action="/attendance/update" method="POST">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>Subject Name</th>
+                    <th>Classes Attended</th>
+                    <th>Total Classes</th>
+                    <th>Attendance</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+
+            </thead>
+
+            <tbody id="tableBody">
+
+            <% subjects.forEach(s=>{ %>
+
+                <tr>
+
+                    <td><%= s.subject %></td>
+
+                    <td>
+                        <input
+                            type="number"
+                            class="attended"
+                            name="attended_<%= s.id %>"
+                            value="<%= s.attended %>"
+                            min="0">
+                    </td>
+
+                    <td>
+                        <input
+                            type="number"
+                            class="total"
+                            name="total_<%= s.id %>"
+                            value="<%= s.total %>"
+                            min="0">
+                    </td>
+
+                    <td class="percentage <%= s.total>0 && (s.attended/s.total)*100>=75 ? "good" : "bad" %>">
+                        <%= s.total>0
+                            ? ((s.attended/s.total)*100).toFixed(2)+"%"
+                            : "-" %>
+                    </td>
+
+                    <td class="status <%= s.total>0 && (s.attended/s.total)*100>=75 ? "good" : "bad" %>">
+                        <%= s.total===0
+                            ? "-"
+                            : (s.attended/s.total)*100>=75
+                                ? "Good"
+                                : "Below 75%" %>
+                    </td>
+
+                    <td>
+                        <button
+                            class="delete-btn"
+                            formaction="/attendance/delete/<%= s.id %>"
+                            formnovalidate>
+                            Delete
+                        </button>
+                    </td>
+
+                </tr>
+
+            <% }) %>
+
+            </tbody>
+
+        </table>
+
+        <button type="submit">
+            Save Attendance
+        </button>
+
+        <button
+            type="button"
+            onclick="calculateAttendance()">
+            Calculate
+        </button>
+
+    </form>
+
+    <% } %>
+
+</div>
+
+<!-- PREDICTOR -->
+
+<% if(subjects.length>0){ %>
+
+<div class="card">
+
+    <h2>Attendance Predictor</h2>
+
+    <label>Select Subject</label>
+
+    <select id="subjectSelect">
+
+        <option value="">Select Subject</option>
+
+        <% subjects.forEach((s,i)=>{ %>
+
+            <option value="<%= i %>"><%= s.subject %></option>
+
+        <% }) %>
+
+    </select>
+
+    <label>Remaining Classes</label>
+
+    <input
+        type="number"
+        id="remainingClasses"
+        placeholder="Enter Remaining Classes"
+        min="0">
+
+    <br>
+
+    <button onclick="calculateBunk()">
+        Calculate
+    </button>
+
+    <div id="prediction">
+        Prediction will appear here.
+    </div>
+
+</div>
+
+<% } %>
+
+</div>
+
+<script>
+
+function calculateAttendance() {
+
+    const rows = document.querySelectorAll("#tableBody tr");
+
+    rows.forEach(row => {
+
+        const attended = parseInt(row.querySelector(".attended").value);
+        const total = parseInt(row.querySelector(".total").value);
+
+        const percentageCell = row.querySelector(".percentage");
+        const statusCell = row.querySelector(".status");
+
+        if (isNaN(attended) || isNaN(total) || total <= 0 || attended > total) {
+
+            percentageCell.innerHTML = "-";
+            statusCell.innerHTML = "Invalid Data";
+            statusCell.className = "status bad";
+
+            return;
+
+        }
+
+        const percentage = (attended / total) * 100;
+
+        percentageCell.innerHTML = percentage.toFixed(2) + "%";
+
+        if (percentage >= 75) {
+
+            percentageCell.className = "percentage good";
+            statusCell.className = "status good";
+            statusCell.innerHTML = "Good";
+
+        }
+
+        else {
+
+            let need = 0;
+
+            while (((attended + need) / (total + need)) * 100 < 75) {
+
+                need++;
+
+            }
+
+            percentageCell.className = "percentage bad";
+            statusCell.className = "status bad";
+            statusCell.innerHTML = "Attend " + need + " class(es)";
+
+        }
+
+    });
+
+}
+
+function calculateBunk() {
+
+    const selected = document.getElementById("subjectSelect").value;
+    const remaining = parseInt(document.getElementById("remainingClasses").value);
+
+    if (selected === "") {
+
+        alert("Select a subject.");
+        return;
+
+    }
+
+    if (isNaN(remaining) || remaining < 0) {
+
+        alert("Enter valid remaining classes.");
+        return;
+
+    }
+
+    const row = document.querySelectorAll("#tableBody tr")[selected];
+
+    const attended = parseInt(row.querySelector(".attended").value);
+    const total = parseInt(row.querySelector(".total").value);
+
+    if (isNaN(attended) || isNaN(total)) {
+
+        alert("Enter attendance details first.");
+        return;
+
+    }
+
+    const futureTotal = total + remaining;
+
+    let maxBunks = 0;
+
+    for (let bunk = 0; bunk <= remaining; bunk++) {
+
+        const attendFuture = remaining - bunk;
+
+        const finalAttendance =
+            ((attended + attendFuture) / futureTotal) * 100;
+
+        if (finalAttendance >= 75) {
+
+            maxBunks = bunk;
+
+        }
+
+    }
+
+    const prediction = document.getElementById("prediction");
+
+    if (maxBunks === 0) {
+
+        prediction.innerHTML =
+            "<span class='bad'>You must attend all remaining classes to maintain 75% attendance.</span>";
+
+    }
+
+    else {
+
+        prediction.innerHTML =
+            "<span class='good'>You can leave <b>" +
+            maxBunks +
+            "</b> class(es) and still maintain 75% attendance.</span>";
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
