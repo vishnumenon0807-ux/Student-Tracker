@@ -523,7 +523,9 @@ button{
 
         <table id="timetable">
 
-            <thead>
+            <!-- one row group only - a rowspan cannot cross thead/tbody -->
+
+            <tbody>
 
             <tr>
                 <th class="rowhead">THEORY<br>HOURS</th>
@@ -559,10 +561,6 @@ button{
                 <th class="lab">6:31 PM<br>to<br>7:20 PM</th>
                 <th class="lab"></th>
             </tr>
-
-            </thead>
-
-            <tbody>
 
             <tr>
                 <th class="rowhead">MON</th>
