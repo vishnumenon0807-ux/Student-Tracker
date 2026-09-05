@@ -42,10 +42,14 @@ h1{
     color:#6c3df4;
 }
 
-form{
+.add-form{
     display:grid;
     grid-template-columns:1fr 1fr 1fr auto;
     gap:15px;
+}
+
+.row-form{
+    display:inline;
 }
 
 input{
@@ -107,6 +111,16 @@ td{
 
 }
 
+.soon{
+
+    background:#f0ad4e;
+    color:white;
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:14px;
+
+}
+
 .late{
 
     background:#dc3545;
@@ -117,9 +131,43 @@ td{
 
 }
 
+.done{
+
+    background:#6c757d;
+    color:white;
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:14px;
+
+}
+
+.complete{
+
+    background:#28a745;
+    padding:8px 14px;
+    font-size:14px;
+
+}
+
+.complete:hover{
+
+    background:#1e7e34;
+
+}
+
+.undo{
+
+    background:#6c757d;
+    padding:8px 14px;
+    font-size:14px;
+
+}
+
 .delete{
 
     background:#dc3545;
+    padding:8px 14px;
+    font-size:14px;
 
 }
 
@@ -136,6 +184,7 @@ td{
     padding:20px;
 
 }
+
 .navbar{
     background:#6c3df4;
     color:white;
@@ -168,6 +217,7 @@ td{
     background:white;
     color:#6c3df4;
 }
+
 </style>
 
 </head>
@@ -201,7 +251,7 @@ td{
 
 <h2>Add Assignment</h2>
 
-<form action="/assignment/add" method="POST">
+<form class="add-form" action="/assignment/add" method="POST">
 
 <input
 type="text"
@@ -244,6 +294,7 @@ Add
 <th>Assignment</th>
 <th>Deadline</th>
 <th>Status</th>
+<th>Action</th>
 
 </tr>
 
@@ -255,7 +306,7 @@ Add
 
 <tr>
 
-<td colspan="4" class="empty">
+<td colspan="5" class="empty">
 
 No upcoming assignments
 
@@ -273,15 +324,49 @@ No upcoming assignments
 
 <td><%=a.assignment%></td>
 
-<td><%=a.deadline%></td>
+<td>
+<%= new Date(a.deadline).getDate() %>
+<%= new Date(a.deadline).toLocaleString("en-US",{month:"long"}) %>
+</td>
 
 <td>
 
-<span class="pending">
+<span class="<%= a.daysleft<=2 ? "soon" : "pending" %>">
 
-Pending
+<%= a.daysleft===0
+    ? "Due today"
+    : a.daysleft===1
+        ? "1 day left"
+        : a.daysleft+" days left" %>
 
 </span>
+
+</td>
+
+<td>
+
+<form
+class="row-form"
+action="/assignment/complete/<%=a.id%>"
+method="POST">
+
+<button class="complete">
+Done
+</button>
+
+</form>
+
+<form
+class="row-form"
+action="/assignment/delete/<%=a.id%>"
+method="POST"
+onsubmit="return confirm('Delete this assignment?')">
+
+<button class="delete">
+Delete
+</button>
+
+</form>
 
 </td>
 
@@ -341,7 +426,10 @@ No backlogs 🎉
 
 <td><%=a.assignment%></td>
 
-<td><%=a.deadline%></td>
+<td>
+<%= new Date(a.deadline).getDate() %>
+<%= new Date(a.deadline).toLocaleString("en-US",{month:"long"}) %>
+</td>
 
 <td>
 
@@ -355,13 +443,126 @@ Overdue
 
 <td>
 
-<button
-class="delete"
-onclick="deleteAssignment('<%=a.id%>')">
+<form
+class="row-form"
+action="/assignment/complete/<%=a.id%>"
+method="POST">
 
-Delete
-
+<button class="complete">
+Done
 </button>
+
+</form>
+
+<form
+class="row-form"
+action="/assignment/delete/<%=a.id%>"
+method="POST"
+onsubmit="return confirm('Delete this assignment?')">
+
+<button class="delete">
+Delete
+</button>
+
+</form>
+
+</td>
+
+</tr>
+
+<% }) %>
+
+</tbody>
+
+</table>
+
+</div>
+
+<!-- Completed -->
+
+<div class="card">
+
+<h2>Completed</h2>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Course</th>
+<th>Assignment</th>
+<th>Deadline</th>
+<th>Status</th>
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<% if(completed.length===0){ %>
+
+<tr>
+
+<td colspan="5" class="empty">
+
+Nothing completed yet
+
+</td>
+
+</tr>
+
+<% } %>
+
+<% completed.forEach(a=>{ %>
+
+<tr>
+
+<td><%=a.subject%></td>
+
+<td><%=a.assignment%></td>
+
+<td>
+<%= new Date(a.deadline).getDate() %>
+<%= new Date(a.deadline).toLocaleString("en-US",{month:"long"}) %>
+</td>
+
+<td>
+
+<span class="done">
+
+Done
+
+</span>
+
+</td>
+
+<td>
+
+<form
+class="row-form"
+action="/assignment/undo/<%=a.id%>"
+method="POST">
+
+<button class="undo">
+Undo
+</button>
+
+</form>
+
+<form
+class="row-form"
+action="/assignment/delete/<%=a.id%>"
+method="POST"
+onsubmit="return confirm('Delete this assignment?')">
+
+<button class="delete">
+Delete
+</button>
+
+</form>
 
 </td>
 
@@ -376,20 +577,6 @@ Delete
 </div>
 
 </div>
-
-<script>
-
-function deleteAssignment(id){
-
-    if(confirm("Delete this assignment?")){
-
-        window.location.href="/assignment/delete/"+id;
-
-    }
-
-}
-
-</script>
 
 </body>
 </html>
