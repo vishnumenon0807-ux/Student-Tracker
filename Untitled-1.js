@@ -232,17 +232,100 @@ res.render("grades", {
 });
 
 });
+// Run this in psql first:
+//
+// ALTER TABLE assignment ADD COLUMN completed BOOLEAN DEFAULT false;
+//
+// Then replace your existing /assignment routes with these five
+
+
+app.get("/assignment", async(req,res)=>{
+
+    try{
+
+        const name=req.session.name1;
+
+        if(!name){
+            return res.redirect("/");
+        }
+
+        const upcoming=await db.query(
+            `SELECT *
+            FROM assignment
+            WHERE name=$1
+            AND completed=false
+            AND deadline>=CURRENT_DATE
+            ORDER BY deadline`,
+            [name]
+        );
+
+        const backlog=await db.query(
+            `SELECT *
+            FROM assignment
+            WHERE name=$1
+            AND completed=false
+            AND deadline<CURRENT_DATE
+            ORDER BY deadline`,
+            [name]
+        );
+
+        const done=await db.query(
+            `SELECT *
+            FROM assignment
+            WHERE name=$1
+            AND completed=true
+            ORDER BY deadline DESC`,
+            [name]
+        );
+
+        const today=new Date();
+        today.setHours(0,0,0,0);
+
+        upcoming.rows.forEach(a=>{
+
+            const due=new Date(a.deadline);
+            due.setHours(0,0,0,0);
+
+            a.daysleft=Math.round((due-today)/86400000);
+
+        });
+
+        res.render("assignment",{
+
+            assignments:upcoming.rows,
+            backlogs:backlog.rows,
+            completed:done.rows
+
+        });
+
+    }
+
+    catch(err){
+
+        console.log(err);
+        res.send("Something went wrong");
+
+    }
+
+});
+
+
 app.post("/assignment/add", async(req,res)=>{
 
     try{
 
         const name=req.session.name1;
+
+        if(!name){
+            return res.redirect("/");
+        }
+
         const {subject,assignment,deadline}=req.body;
 
         await db.query(
             `INSERT INTO assignment
-            (name,subject,assignment,deadline)
-            VALUES($1,$2,$3,$4)`,
+            (name,subject,assignment,deadline,completed)
+            VALUES($1,$2,$3,$4,false)`,
             [name,subject,assignment,deadline]
         );
 
@@ -253,58 +336,29 @@ app.post("/assignment/add", async(req,res)=>{
     catch(err){
 
         console.log(err);
+        res.send("Something went wrong");
 
     }
 
 });
-app.get("/assignment",async(req,res)=>{
+
+
+app.post("/assignment/complete/:id", async(req,res)=>{
 
     try{
 
         const name=req.session.name1;
 
-        const upcoming=await db.query(
-            `SELECT *
-            FROM assignment
-            WHERE name=$1
-            AND deadline>=CURRENT_DATE
-            ORDER BY deadline`,
-            [name]
-        );
-
-        const backlog=await db.query(
-            `SELECT *
-            FROM assignment
-            WHERE name=$1
-            AND deadline<CURRENT_DATE
-            ORDER BY deadline`,
-            [name]
-        );
-
-        res.render("assignment",{
-
-            assignments:upcoming.rows,
-            backlogs:backlog.rows
-
-        });
-
-    }
-
-    catch(err){
-
-        console.log(err);
-
-    }
-
-});
-app.get("/assignment/delete/:id",async(req,res)=>{
-
-    try{
+        if(!name){
+            return res.redirect("/");
+        }
 
         await db.query(
-            `DELETE FROM assignment
-            WHERE id=$1`,
-            [req.params.id]
+            `UPDATE assignment
+            SET completed=true
+            WHERE id=$1
+            AND name=$2`,
+            [req.params.id,name]
         );
 
         res.redirect("/assignment");
@@ -314,11 +368,74 @@ app.get("/assignment/delete/:id",async(req,res)=>{
     catch(err){
 
         console.log(err);
+        res.send("Something went wrong");
 
     }
 
 });
-// Replace your existing app.get("/attendance") with these four routes
+
+
+app.post("/assignment/undo/:id", async(req,res)=>{
+
+    try{
+
+        const name=req.session.name1;
+
+        if(!name){
+            return res.redirect("/");
+        }
+
+        await db.query(
+            `UPDATE assignment
+            SET completed=false
+            WHERE id=$1
+            AND name=$2`,
+            [req.params.id,name]
+        );
+
+        res.redirect("/assignment");
+
+    }
+
+    catch(err){
+
+        console.log(err);
+        res.send("Something went wrong");
+
+    }
+
+});
+
+
+app.post("/assignment/delete/:id", async(req,res)=>{
+
+    try{
+
+        const name=req.session.name1;
+
+        if(!name){
+            return res.redirect("/");
+        }
+
+        await db.query(
+            `DELETE FROM assignment
+            WHERE id=$1
+            AND name=$2`,
+            [req.params.id,name]
+        );
+
+        res.redirect("/assignment");
+
+    }
+
+    catch(err){
+
+        console.log(err);
+        res.send("Something went wrong");
+
+    }
+
+});
 
 
 app.get("/attendance", async(req,res)=>{
